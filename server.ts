@@ -99,17 +99,23 @@ async function startServer() {
       const newHand = player.hand.filter(c => c.id !== card.id);
       player.hand = newHand;
 
-      let newMustDraw = gs.mustDrawCards;
       let nextIndex = (gs.currentPlayerIndex + gs.direction + 2) % 2;
+      let penaltyText = null;
       
       if (card.value === 'skip' || card.value === 'reverse') {
          nextIndex = gs.currentPlayerIndex; 
       } else if (card.value === 'draw2') {
-         newMustDraw += 2;
+         const targetIndex = (gs.currentPlayerIndex + gs.direction + 2) % 2;
+         const { drawnCards } = drawCardsFromDeck(gs, 2);
+         gs.players[targetIndex].hand.push(...drawnCards);
          nextIndex = gs.currentPlayerIndex;
+         penaltyText = `${gs.players[targetIndex].name} DREW +2!`;
       } else if (card.value === 'draw4') {
-         newMustDraw += 4;
+         const targetIndex = (gs.currentPlayerIndex + gs.direction + 2) % 2;
+         const { drawnCards } = drawCardsFromDeck(gs, 4);
+         gs.players[targetIndex].hand.push(...drawnCards);
          nextIndex = gs.currentPlayerIndex;
+         penaltyText = `${gs.players[targetIndex].name} DREW +4!`;
       }
 
       // Win condition
@@ -132,10 +138,13 @@ async function startServer() {
       gs.discardPile.push(card);
       gs.currentColor = newColor;
       gs.currentPlayerIndex = nextIndex;
-      gs.mustDrawCards = newMustDraw;
+      gs.mustDrawCards = 0; // reset safely
 
       io.to(roomId).emit("state_update", { gameState: gs });
       io.to(roomId).emit("play_sound", { type: card.color === 'wild' ? 'wild' : (['skip', 'reverse', 'draw2'].includes(card.value) ? 'action' : 'play') });
+      if (penaltyText) {
+        io.to(roomId).emit("show_big_text", { text: penaltyText, color: "text-red-500" });
+      }
     });
 
     socket.on("draw_card", ({ roomId, playerId }) => {

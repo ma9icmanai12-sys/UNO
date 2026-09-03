@@ -64,6 +64,10 @@ export const GameBoard: React.FC<GameBoardProps> = ({ playerName, isAI, roomId, 
       }
     });
 
+    newSocket.on('show_big_text', (data: { text: string, color: string }) => {
+      showBigText(data.text, data.color);
+    });
+
     newSocket.on('game_over', (data: { winner: string, score: number }) => {
       audioManager.playWin();
       fireConfetti();
@@ -255,11 +259,6 @@ export const GameBoard: React.FC<GameBoardProps> = ({ playerName, isAI, roomId, 
            {/* Deck */}
            <div className="relative">
              <Card card={{ id: 'deck', color: 'red', value: '0' }} isFaceDown={true} onClick={isMyTurn ? drawCard : undefined} disabled={!isMyTurn} />
-             {gameState.mustDrawCards > 0 && (
-                <div className="absolute -top-4 -right-4 bg-[#ed1c24] text-white font-black text-xl w-10 h-10 flex items-center justify-center rounded-full shadow-lg border-2 border-white animate-bounce">
-                  +{gameState.mustDrawCards}
-                </div>
-             )}
            </div>
 
            {/* Discard */}
