@@ -1,0 +1,6 @@
+{
+  "name": "UNO Game Show",
+  "description": "A high-energy, vibrant 2-player UNO game with a game show theme, audio effects, and smart AI opponent.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
