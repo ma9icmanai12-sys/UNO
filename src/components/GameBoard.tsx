@@ -140,13 +140,13 @@ export const GameBoard: React.FC<GameBoardProps> = ({ playerName, isAI, roomId, 
     const currentState = gameStateRef.current;
     if (!currentState || !socket || !activeRoomId) return;
     
-    if (aiPlayer.hand.length === 2 && Math.random() > 0.1) {
-       socket.emit('call_uno', { roomId: activeRoomId, playerId: aiPlayer.id });
-    }
-
     const move = getAIMove(aiPlayer.hand, currentState.discardPile[currentState.discardPile.length - 1], currentState.currentColor, currentState.mustDrawCards);
 
     if (move) {
+      if (aiPlayer.hand.length === 2 && Math.random() > 0.1) {
+         socket.emit('call_uno', { roomId: activeRoomId, playerId: aiPlayer.id });
+      }
+
       if (move.color === 'wild') {
         const bestColor = getAIMostFrequentColor(aiPlayer.hand);
         socket.emit('play_card', { roomId: activeRoomId, playerId: aiPlayer.id, card: move, chosenColor: bestColor });
