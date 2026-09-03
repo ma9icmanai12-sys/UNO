@@ -85,6 +85,11 @@ export const GameBoard: React.FC<GameBoardProps> = ({ playerName, isAI, roomId, 
     };
   }, [playerName, isAI, roomId]);
 
+  const gameStateRef = useRef<GameState | null>(null);
+  useEffect(() => {
+    gameStateRef.current = gameState;
+  }, [gameState]);
+
   useEffect(() => {
     if (gameState && gameState.status === 'playing' && isAI && socket) {
       const currentPlayer = gameState.players[gameState.currentPlayerIndex];
@@ -132,13 +137,14 @@ export const GameBoard: React.FC<GameBoardProps> = ({ playerName, isAI, roomId, 
   };
 
   const handleAITurn = (aiPlayer: any) => {
-    if (!gameState || !socket || !activeRoomId) return;
+    const currentState = gameStateRef.current;
+    if (!currentState || !socket || !activeRoomId) return;
     
     if (aiPlayer.hand.length === 2 && Math.random() > 0.1) {
        socket.emit('call_uno', { roomId: activeRoomId, playerId: aiPlayer.id });
     }
 
-    const move = getAIMove(aiPlayer.hand, gameState.discardPile[gameState.discardPile.length - 1], gameState.currentColor, gameState.mustDrawCards);
+    const move = getAIMove(aiPlayer.hand, currentState.discardPile[currentState.discardPile.length - 1], currentState.currentColor, currentState.mustDrawCards);
 
     if (move) {
       if (move.color === 'wild') {
@@ -153,7 +159,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ playerName, isAI, roomId, 
   };
 
   const playCard = (card: CardType, chosenColor?: Color) => {
-    if (!gameState || !socket || !activeRoomId) return;
+    if (!gameState || !socket || !activeRoomId || !card) return;
     
     if (card.color === 'wild' && !chosenColor) {
       setPendingWildCard(card);
@@ -190,11 +196,11 @@ export const GameBoard: React.FC<GameBoardProps> = ({ playerName, isAI, roomId, 
   };
 
   if (!gameState || !myPlayerId) {
-     return <div className="min-h-screen flex items-center justify-center text-white text-3xl font-black bg-animated">CONNECTING...</div>;
+     return <div className="min-h-screen flex items-center justify-center text-white text-3xl font-black">CONNECTING...</div>;
   }
 
   if (gameState.status === 'lobby') {
-     return <div className="min-h-screen flex items-center justify-center text-white text-3xl font-black bg-animated flex-col gap-4">
+     return <div className="min-h-screen flex items-center justify-center text-white text-3xl font-black flex-col gap-4">
         <span>WAITING FOR OPPONENT...</span>
         {roomId && <span className="text-xl font-normal opacity-70">Room Code: {roomId}</span>}
         <button onClick={onExit} className="mt-8 px-6 py-2 bg-red-500/80 hover:bg-red-500 rounded-full text-white text-lg transition-all">Cancel</button>
@@ -212,7 +218,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ playerName, isAI, roomId, 
   const isMyTurn = gameState.currentPlayerIndex === myPlayerIndex;
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-animated flex flex-col justify-between">
+    <div className="relative w-full h-screen overflow-hidden flex flex-col justify-between">
       {/* Header controls */}
       <div className="absolute top-4 right-4 z-50 flex gap-4">
         <button onClick={toggleMute} className="p-3 bg-white/10 rounded-full hover:bg-white/20 text-white backdrop-blur-md">
