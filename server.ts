@@ -73,8 +73,11 @@ async function startServer() {
         startGame(roomId);
       }
 
-      // Send state to room
-      io.to(roomId).emit("state_update", { gameState: room.gameState, playerId });
+      // Broadcast state to the existing player without the playerId (so it doesn't overwrite theirs)
+      socket.to(roomId).emit("state_update", { gameState: room.gameState });
+      
+      // Send state to the new player with their assigned playerId
+      socket.emit("state_update", { gameState: room.gameState, playerId });
     });
 
     socket.on("play_card", ({ roomId, playerId, card, chosenColor }) => {
