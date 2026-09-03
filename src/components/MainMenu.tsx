@@ -209,7 +209,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({ onJoinGame, bgTheme, onTheme
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 gap-8">
               <div>
                 <h3 className="text-xl font-bold text-yellow-400 mb-4 border-b border-white/10 pb-2">MOST WINS</h3>
                 <div className="flex flex-col gap-2">
@@ -217,19 +217,6 @@ export const MainMenu: React.FC<MainMenuProps> = ({ onJoinGame, bgTheme, onTheme
                     <div key={i} className="flex justify-between items-center p-3 rounded-lg bg-white/5">
                       <span className="text-white font-bold"><span className="text-white/30 mr-2">#{i+1}</span>{entry.name}</span>
                       <span className="text-yellow-400 font-bold">{entry.wins} W</span>
-                    </div>
-                  ))}
-                  {leaderboard.length === 0 && <div className="text-white/30 italic">No games played yet.</div>}
-                </div>
-              </div>
-              
-              <div>
-                <h3 className="text-xl font-bold text-blue-400 mb-4 border-b border-white/10 pb-2">LOWEST SCORE</h3>
-                <div className="flex flex-col gap-2">
-                  {[...leaderboard].sort((a, b) => a.score - b.score).slice(0, 5).map((entry, i) => (
-                    <div key={i} className="flex justify-between items-center p-3 rounded-lg bg-white/5">
-                      <span className="text-white font-bold"><span className="text-white/30 mr-2">#{i+1}</span>{entry.name}</span>
-                      <span className="text-blue-400 font-bold">{entry.score} pts</span>
                     </div>
                   ))}
                   {leaderboard.length === 0 && <div className="text-white/30 italic">No games played yet.</div>}
