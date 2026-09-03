@@ -24,7 +24,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({ onJoinGame }) => {
           UNO!
         </h1>
         <div className="absolute -bottom-4 right-0 bg-black text-yellow-400 font-bold px-4 py-1 rounded-full text-xl border-2 border-yellow-400 rotate-12 shadow-lg">
-          GAME SHOW
+          CLASSIC
         </div>
       </motion.div>
 
@@ -98,7 +98,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({ onJoinGame }) => {
               
               <div className="flex flex-col gap-4">
                 <h3 className="text-white/70 font-bold uppercase tracking-wider text-sm">Available Rooms</h3>
-                {['Room 772', 'GameShow 101', 'Pro Players'].map((room, i) => (
+                {['Room 772', 'Casual Play', 'Pro Players'].map((room, i) => (
                   <button
                     key={i}
                     onClick={() => onJoinGame(playerName, false, room)}
