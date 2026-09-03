@@ -14,6 +14,29 @@ async function startServer() {
     cors: { origin: "*" }
   });
 
+  // Global in-memory leaderboard
+  let globalLeaderboard: { name: string; wins: number; score: number }[] = [];
+
+  app.use(express.json());
+
+  app.get('/api/leaderboard', (req, res) => {
+    res.json(globalLeaderboard);
+  });
+
+  app.post('/api/leaderboard', (req, res) => {
+    const { name, wins, score } = req.body;
+    if (!name) return res.status(400).json({ error: 'Name required' });
+    
+    const existing = globalLeaderboard.find(entry => entry.name === name);
+    if (existing) {
+      existing.wins += wins;
+      existing.score += score;
+    } else {
+      globalLeaderboard.push({ name, wins, score });
+    }
+    res.json(globalLeaderboard);
+  });
+
   // Store rooms and their game state
   const rooms: Record<string, { gameState: GameState; players: { socketId: string; id: string }[] }> = {};
 

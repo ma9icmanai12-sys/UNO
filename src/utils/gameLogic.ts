@@ -4,25 +4,28 @@ export const COLORS: Color[] = ['red', 'blue', 'green', 'yellow'];
 export const VALUES: Value[] = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'skip', 'reverse', 'draw2'];
 export const WILD_VALUES: Value[] = ['wild', 'draw4'];
 
+let cardCounter = 0;
+const generateId = () => `card_${Date.now()}_${cardCounter++}`;
+
 export function generateDeck(): CardType[] {
   const deck: CardType[] = [];
   
   // Normal colors
   for (const color of COLORS) {
     // One 0
-    deck.push({ id: Math.random().toString(36).substr(2, 9), color, value: '0' });
+    deck.push({ id: generateId(), color, value: '0' });
     
     // Two of 1-9, skip, reverse, draw2
     for (let i = 1; i < VALUES.length; i++) {
-      deck.push({ id: Math.random().toString(36).substr(2, 9), color, value: VALUES[i] });
-      deck.push({ id: Math.random().toString(36).substr(2, 9), color, value: VALUES[i] });
+      deck.push({ id: generateId(), color, value: VALUES[i] });
+      deck.push({ id: generateId(), color, value: VALUES[i] });
     }
   }
   
   // Wild cards
   for (let i = 0; i < 4; i++) {
-    deck.push({ id: Math.random().toString(36).substr(2, 9), color: 'wild', value: 'wild' });
-    deck.push({ id: Math.random().toString(36).substr(2, 9), color: 'wild', value: 'draw4' });
+    deck.push({ id: generateId(), color: 'wild', value: 'wild' });
+    deck.push({ id: generateId(), color: 'wild', value: 'draw4' });
   }
   
   return shuffle(deck);
